@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>NIRANJAN CREATIONS</title>
+	</head>
+	<style>
+		h1{
+			border:1px solid cyan;
+			border-radius:20px;
+			padding:20px;
+			}
+		button{
+			color:white;
+			background-color:#0f2025;
+			border:1px solid cyan;
+			border-radius:20px;
+			padding:20px;
+			font-size:25px;
+			}
+	</style>
+	<body style="background-color:#0f2025;color:silver;">
+		<center>
+			<h1>WELCOME TO NIRANJAN CREATIONS</h1>
+			<button onclick="start()">Share Screen Now !</button>
+			<video autoplay playsinline style="width:100%;height:100%"></video>
+		</center>
+		<script>
+			const ws=new WebSocket("ws://192.168.1.170:8765"),pc=new 				RTCPeerConnection(),vid=document.querySelector("video")
+			pc.onicecandidate=e=>									e.candidate&&ws.send(JSON.stringify({type:"ice",data:e.candidate}))
+			pc.ontrack=e=>vid.srcObject=e.streams[0]
+			ws.onmessage=async m=>{const msg=JSON.parse(m.data)
+			if(msg.type==="answer")await pc.setRemoteDescription(msg.data)
+			if(msg.type==="ice")await pc.addIceCandidate(msg.data)
+			if(msg.type==="offer"){await pc.setRemoteDescription(msg.data)
+			const a=await pc.createAnswer();await pc.setLocalDescription(a)
+			ws.send(JSON.stringify({type:"answer",data:a}))}}
+			async function start(){const s=await 							navigator.mediaDevices.getDisplayMedia({video:true,audio:false})
+			s.getTracks().forEach(t=>pc.addTrack(t,s))
+			const o=await pc.createOffer();await pc.setLocalDescription(o)
+			ws.send(JSON.stringify({type:"offer",data:o}))}
+		</script>
+	</body>
+</html>
