@@ -23,7 +23,7 @@
 			<h1>WELCOME TO NIRANJAN CREATIONS</h1>
 			<video autoplay playsinline style="height:100%;width:100%;" muted></video>
 			<script>
-			const ws=new WebSocket("ws://192.168.1.170:8765"), pc=new 				RTCPeerConnection(), vid=document.querySelector("video");
+			const ws=new WebSocket("ws://localhost:8765"), pc=new 				RTCPeerConnection(), vid=document.querySelector("video");
 
 			pc.onicecandidate=e=>{ if(e.candidate) 							ws.send(JSON.stringify({type:"ice",data:e.candidate})) }
 			pc.ontrack=e=>vid.srcObject=e.streams[0];
@@ -40,4 +40,5 @@
 			}
 			</script>
 	</body>
+
 </html>
